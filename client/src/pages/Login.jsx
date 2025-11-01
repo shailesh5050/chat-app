@@ -1,11 +1,12 @@
-
 import { useState } from 'react';
 import './LoginRegister.css';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +21,7 @@ const Login = () => {
       if(response.status===200){
         setEmail('');
         setPassword('');
+        navigate('/chat');
       }
       return response.data;
     } catch (error) {

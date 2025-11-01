@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './LoginRegister.css';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
