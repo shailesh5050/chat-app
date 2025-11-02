@@ -17,7 +17,9 @@ const Login = () => {
 
   async function loginUser(credentials) {
     try {
-      const response = await axios.post('http://localhost:3000/api/user/login', credentials);
+      const response = await axios.post('http://localhost:3000/api/user/login', credentials, {
+        withCredentials: true // This is crucial for cookies to be set
+      });
       if(response.status===200){
         setEmail('');
         setPassword('');

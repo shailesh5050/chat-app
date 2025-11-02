@@ -48,27 +48,37 @@ class UserController {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      const user = await UserModel.findOne({ email })
+      const user = await UserModel.findOne({ email });
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
 
-       // Compare password
+      // Compare password
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-
-      const token = jwt.sign({ user }, process.env.SECRET)
+      const token = jwt.sign({ user }, process.env.SECRET);
+      
+      // Set cookie with proper configuration for cross-origin requests
       res.cookie('token', token, {
-        httpOnly: true,    // JS can't read it — safer
-        secure: false,     // true in production (HTTPS)
-        sameSite: 'lax',   // helps prevent CSRF
+        httpOnly: true,     // JS can't read it — safer
+        secure: false,      // Set to false for development (HTTP)
+        sameSite: 'lax',    // Use 'lax' for development
+        path: '/',          // Make cookie available for all paths
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-      })
-      return res.status(200).json({ data: { emai: user.email, id: user._id }, message: "Login Successfully" });
-
-
-
+      });
+      
+      console.log("Setting cookie:", token.substring(0, 10) + "...");
+      
+      return res.status(200).json({ 
+        data: { email: user.email, id: user._id }, 
+        message: "Login Successfully" 
+      });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   }
