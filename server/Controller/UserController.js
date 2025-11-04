@@ -60,6 +60,9 @@ class UserController {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
+      delete user.password;
+      
+      // Generate JWT token
       const token = jwt.sign({ user }, process.env.SECRET);
       
       // Set cookie with proper configuration for cross-origin requests

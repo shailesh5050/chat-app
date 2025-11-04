@@ -7,6 +7,7 @@ import connectDB from './DB/connect.js';
 import userRoutes from './Routes/UserRoute.js';
 import registerSocketHandlers from './socket/index.js';
 import cookieParser from "cookie-parser";
+import messageRoutes from './Routes/MessageRoute.js';
 dotenv.config();
 connectDB(process.env.DB_URI)
 const app = express();
@@ -29,6 +30,7 @@ app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 app.use('/api/user',userRoutes)
+app.use('/api/message',messageRoutes)
 registerSocketHandlers(io)
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
