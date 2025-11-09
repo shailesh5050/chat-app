@@ -4,9 +4,9 @@ const messageSchema = new mongoose.Schema({
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   content :String,
-  createdAt :{default:Date.now(),type:Date}
+  createdAt :{default:Date.now,type:Date}
 });
 
-const MessageModel = mongoose.model("Messages",messageSchema)
+const MessageModel = mongoose.model("message",messageSchema)
 
 export default MessageModel

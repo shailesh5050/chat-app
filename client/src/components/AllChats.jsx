@@ -1,26 +1,45 @@
+import { useChatContext } from '../Context/ChatProvider.jsx'
+import { useState,useEffect } from 'react'
 
-import React from 'react';
+const AllChats = () => {
+  const {chats,isLoading,getActiveChatMessages,activeChatUser} = useChatContext()
 
-const dummyChats = [
-  { id: 1, name: 'Family Group', type: 'group' },
-  { id: 2, name: 'Work Friends', type: 'group' },
-  { id: 3, name: 'Alice', type: 'private' },
-  { id: 4, name: 'Bob', type: 'private' },
-];
+  
+  const [uniqueChats,setUniqueChats] = useState([])
 
-const AllChats = ({ selectedChat, setSelectedChat }) => {
+  useEffect(() => {
+    getUnique()
+  },[chats])
+
+  function getUnique(){
+    let map = new Map()
+
+    chats.forEach((item,index)=>{
+        if(!map.has(item.sender._id)){
+            map.set(item.sender._id,item.sender)
+        }
+    })
+    
+    let ar = Array.from(map.values())
+    console.log(ar)
+    setUniqueChats(ar)
+}
+
+  if(isLoading){
+    return <div>Loading...</div>
+  }
   return (
     <div className="allchats-list">
       <h2 className="sidebar-title">Chats</h2>
       <ul>
-        {dummyChats.map(chat => (
+        {uniqueChats.map(chat => (
           <li
-            key={chat.id}
-            className={`chat-item${selectedChat?.id === chat.id ? ' selected' : ''}`}
-            onClick={() => setSelectedChat(chat)}
+            key={chat._id}
+            className={`chat-item${chat?.email === activeChatUser?.email ? ' selected' : ''}`}
+            onClick={() => getActiveChatMessages(chat)}
           >
             <span className={chat.type === 'group' ? 'group-chat' : 'private-chat'}>
-              {chat.name}
+              {chat.username}
             </span>
           </li>
         ))}

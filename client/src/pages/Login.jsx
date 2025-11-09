@@ -36,22 +36,28 @@ const Login = () => {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2 className="auth-title">Login</h2>
         <div className="auth-field">
-          <label>Email</label>
+          <label htmlFor="login-email">Email</label>
           <input
+            id="login-email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
+            autoComplete="email"
             required
           />
         </div>
         <div className="auth-field">
-          <label>Password</label>
+          <label htmlFor="login-password">Password</label>
           <input
+            id="login-password"
+            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
+            autoComplete="current-password"
             required
           />
         </div>

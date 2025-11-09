@@ -1,6 +1,5 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-
+import { useState, useEffect, useRef } from 'react';
+import { useChatContext } from '../Context/ChatProvider.jsx';
 const dummyMessages = {
   1: [
     { id: 1, sender: 'You', text: 'Hi family!' },
@@ -20,18 +19,20 @@ const dummyMessages = {
   ],
 };
 
-const ChatArea = ({ selectedChat }) => {
+const ChatArea = () => {
+  const {activeChatMessages,activeChatUser} = useChatContext()
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (selectedChat) {
-      setMessages(dummyMessages[selectedChat.id] || []);
+    if (activeChatUser) {
+      setMessages(activeChatMessages || []);
+      console.log(activeChatMessages,activeChatUser)
     } else {
       setMessages([]);
     }
-  }, [selectedChat]);
+  }, [activeChatUser,activeChatMessages]);  
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,21 +45,21 @@ const ChatArea = ({ selectedChat }) => {
     setInput('');
   };
 
-  if (!selectedChat) {
+  if (!activeChatUser) {
     return <div className="chatarea-empty">Select a chat to start messaging</div>;
   }
 
   return (
     <div className="chatarea-container">
       <div className="chatarea-header">
-        <h3>{selectedChat.name}</h3>
-        <span className="chat-type">{selectedChat.type === 'group' ? 'Group Chat' : 'Private Chat'}</span>
+        <h3>{activeChatUser.username}</h3>
+        <span className="chat-type">{activeChatUser.type === 'group' ? 'Group Chat' : 'Private Chat'}</span>
       </div>
       <div className="chatarea-messages">
         {messages.map(msg => (
-          <div key={msg.id} className={`message${msg.sender === 'You' ? ' sent' : ' received'}`}>
-            <span className="sender">{msg.sender}:</span>
-            <span className="text">{msg.text}</span>
+          <div key={msg.id} className={`message${msg.sender.email === activeChatUser.email ? ' received' : ' sent'}`}>
+            {/* <span className="sender">{msg.sender.username}:</span> */}
+            <span className="text">{msg.content}</span>
           </div>
         ))}
         <div ref={messagesEndRef} />

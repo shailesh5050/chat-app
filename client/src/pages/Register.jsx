@@ -35,32 +35,41 @@ const Register = () => {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2 className="auth-title">Register</h2>
         <div className="auth-field">
-          <label>Name</label>
+          <label htmlFor="register-name">Name</label>
           <input
+            id="register-name"
+            name="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your name"
+            autoComplete="name"
             required
           />
         </div>
         <div className="auth-field">
-          <label>Email</label>
+          <label htmlFor="register-email">Email</label>
           <input
+            id="register-email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
+            autoComplete="email"
             required
           />
         </div>
         <div className="auth-field">
-          <label>Password</label>
+          <label htmlFor="register-password">Password</label>
           <input
+            id="register-password"
+            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Create a password"
+            autoComplete="new-password"
             required
           />
         </div>
