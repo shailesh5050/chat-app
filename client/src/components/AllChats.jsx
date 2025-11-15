@@ -2,7 +2,7 @@ import { useChatContext } from '../Context/ChatProvider.jsx'
 import { useState,useEffect } from 'react'
 
 const AllChats = () => {
-  const {chats,isLoading,getActiveChatMessages,activeChatUser} = useChatContext()
+  const {chats,isLoading,getActiveChatMessages,activeChatUser,currentUser} = useChatContext()
 
   
   const [uniqueChats,setUniqueChats] = useState([])
@@ -15,13 +15,12 @@ const AllChats = () => {
     let map = new Map()
 
     chats.forEach((item,index)=>{
-        if(!map.has(item.sender._id)){
+        if(!map.has(item.sender._id ) && item.sender._id !== currentUser._id){
             map.set(item.sender._id,item.sender)
         }
     })
     
     let ar = Array.from(map.values())
-    console.log(ar)
     setUniqueChats(ar)
 }
 

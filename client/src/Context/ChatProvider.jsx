@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect,useRef } from 'react'
 import axios from 'axios'
+import {io} from 'socket.io-client'
 
 // Create context outside the component
 const ChatContext = createContext(null)
@@ -10,6 +11,8 @@ const ChatProvider = ({ children }) => {
     const [activeChatUser, setActiveChatUser] = useState({})
     const [activeChatMessages, setActiveChatMessages] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [currentUser, setCurrentUser] = useState(null);
+    const socketRef = useRef(null)
 
     // Remove chats from dependency array to prevent infinite loop
     useEffect(() => {
@@ -27,15 +30,45 @@ const ChatProvider = ({ children }) => {
             }
         }
         getAllChats()
-    }, []) // Empty dependency array - runs only once on mount
+    }, [currentUser]) // Empty dependency array - runs only once on mount
+
+    useEffect(() => {
+        if(!currentUser){
+            return
+        }
+        socketRef.current = io('http://localhost:3000',{
+           withCredentials: true
+        })
+        return () => {
+            socketRef.current.disconnect()
+        }
+    }, [currentUser])
 
     function getActiveChatMessages(user) {
         const chat = chats.filter(chat => chat.sender._id === user._id || chat.recipient._id === user._id)
-        console.log(chat)
         setActiveChatMessages(chat)
         setActiveChatUser(user)
         
         return chat
+    }
+
+    function sendPrivateMessage(user, message) {
+        socketRef.current.emit("private-message", {
+            recipientId: user,
+            content: message
+        })
+    }
+    if(socketRef.current){
+        socketRef.current.on("new-message", (msg) => {
+            console.log("New message:", msg);
+            // handle new message events
+            let message = {
+                sender: msg.sender,
+                recipient: msg.recipient,
+                content: msg.message,
+                createdAt: msg.createdAt
+            }
+        });
     }
 
     return (
@@ -46,7 +79,9 @@ const ChatProvider = ({ children }) => {
             isLoading, 
             getActiveChatMessages,
             setActiveChatUser,
-            
+            currentUser,
+            setCurrentUser,
+            sendPrivateMessage
         }}>
             {children}
         </ChatContext.Provider>

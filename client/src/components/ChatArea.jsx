@@ -20,7 +20,7 @@ const dummyMessages = {
 };
 
 const ChatArea = () => {
-  const {activeChatMessages,activeChatUser} = useChatContext()
+  const {activeChatMessages,activeChatUser,sendPrivateMessage} = useChatContext()
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
@@ -28,7 +28,7 @@ const ChatArea = () => {
   useEffect(() => {
     if (activeChatUser) {
       setMessages(activeChatMessages || []);
-      console.log(activeChatMessages,activeChatUser)
+      //console.log(activeChatMessages,activeChatUser)
     } else {
       setMessages([]);
     }
@@ -41,7 +41,8 @@ const ChatArea = () => {
   const handleSend = (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { id: prev.length + 1, sender: 'You', text: input }]);
+    //setMessages(prev => [...prev, { id: prev.length + 1, sender: 'You', text: input }]);
+    sendPrivateMessage(activeChatUser,input)
     setInput('');
   };
 

@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+
+const userSocketMap = new Map();
 export default function registerSocketHandlers(io) {
   io.use((socket, next) => {
     // Try to get token from auth (Hoppscotch / manual)
@@ -13,7 +15,7 @@ export default function registerSocketHandlers(io) {
     if (!token) return next(new Error("No token"));
     try {
       const decoded = jwt.verify(token, process.env.SECRET);
-      socket.userId = decoded.user.id;
+      socket.userId = decoded.user._id;
       next();
     } catch (error) {
       next(new Error("Invalid token"));
@@ -21,11 +23,18 @@ export default function registerSocketHandlers(io) {
   });
 
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.userId);
+    userSocketMap.set(socket.userId, socket.id);
 
-    socket.on("message", (msg) => {
-      console.log("Message from", socket.userId, ":", msg);
-      // handle chat events
+    socket.on("private-message", (msg) => {
+      console.log("Private message from", socket.userId, ":", msg);
+      // handle private chat events
+       const recipientSocketId = userSocketMap.get(msg.recipientId);
+      if (recipientSocketId) {
+        io.to(recipientSocketId).emit("new-message", msg);
+      }
     });
-  });
+
+     
+    });
+  
 }

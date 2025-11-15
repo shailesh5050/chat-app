@@ -1,10 +1,12 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
+import { useChatContext } from "../Context/ChatProvider"
 
 const PrivateRoute = ({children}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null)
   const [loading, setLoading] = useState(true)
+  const {currentUser,setCurrentUser} = useChatContext()
   
   useEffect(() => {
     const verifyToken = async () => {
@@ -15,6 +17,9 @@ const PrivateRoute = ({children}) => {
           withCredentials: true 
         })
         setIsAuthenticated(response.status === 200)
+        if(response.status === 200){
+          setCurrentUser(response.data.user)
+        }
       } catch (error) {
         console.error("Authentication error:", error)
         setIsAuthenticated(false)
